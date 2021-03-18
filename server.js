@@ -11,6 +11,7 @@ var app = express();
 var cors = require('cors');
 app.use(cors({optionsSuccessStatus: 200}));  // some legacy browsers choke on 204
 
+
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static('public'));
 
@@ -26,8 +27,28 @@ app.get("/api/hello", function (req, res) {
 });
 
 
+app.get('/api/whoami', (req, res, next) => {
+  // let ip = req.headers.host
+  // let userAgent = req.headers['user-agent']
+  // let language = req.headers['accept-language']
+  const {'accept-language': language, 'user-agent': userAgent, host} = req.headers
+  console.log(language, userAgent, host)
+  res.json({
+    ipaddress: host,
+    language: language,
+    software: userAgent
+  })
+})
+
+// 404 response
+app.use((req, res, next) => {
+  res.status(404)
+  res.json({
+    error: 'invalid API route'
+  })
+})
 
 // listen for requests :)
-var listener = app.listen(process.env.PORT, function () {
+var listener = app.listen(3000, function () {
   console.log('Your app is listening on port ' + listener.address().port);
 });
